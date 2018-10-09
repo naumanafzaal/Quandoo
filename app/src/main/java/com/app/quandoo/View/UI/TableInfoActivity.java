@@ -8,11 +8,13 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.widget.Toast;
 
 import com.app.quandoo.R;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
+import com.app.quandoo.Utils.SpacesItemDecoration;
 import com.app.quandoo.View.Adapter.TableInfoAdapter;
 import com.app.quandoo.View.Callback.TableClickCallback;
 import com.app.quandoo.ViewModel.TableInfoViewModel;
@@ -40,6 +42,8 @@ public class TableInfoActivity extends AppCompatActivity implements TableClickCa
     {
         super.onCreate(savedInstanceState);
 
+        setTitle(R.string.tableInfo);
+
         binding = DataBindingUtil.setContentView(this, R.layout.table_info);
         model = ViewModelProviders.of(this).get(TableInfoViewModel.class);
         setUpRecyclerView();
@@ -49,6 +53,10 @@ public class TableInfoActivity extends AppCompatActivity implements TableClickCa
     private void setUpRecyclerView()
     {
         tableInfoAdapter = new TableInfoAdapter(this);
+        GridLayoutManager manager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        binding.tablesRecycler.setLayoutManager(manager);
+        int gridSpacing = getResources().getDimensionPixelSize(R.dimen.gridSpacing);
+        binding.tablesRecycler.addItemDecoration(new SpacesItemDecoration(gridSpacing));
         binding.tablesRecycler.setAdapter(tableInfoAdapter);
         binding.setIsLoading(true);
     }

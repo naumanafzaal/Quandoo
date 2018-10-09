@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Quandoo</string>
+    <string name="tableInfo">Tables Information</string>
+
     <string name="userName">Name: %s %s</string>
     <string name="userId">Id: %d</string>
 

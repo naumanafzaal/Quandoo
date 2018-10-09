@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.widget.Toast;
 
 import com.app.quandoo.R;
@@ -58,6 +59,7 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
     private void setUpRecyclerView()
     {
         customerListAdapter = new CustomerListAdapter(this);
+        binding.customerRecycler.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         binding.customerRecycler.setAdapter(customerListAdapter);
         binding.setIsLoading(true);
     }
