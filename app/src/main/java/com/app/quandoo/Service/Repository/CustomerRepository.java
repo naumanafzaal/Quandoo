@@ -3,6 +3,8 @@ package com.app.quandoo.Service.Repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+import com.app.quandoo.Database.AppDatabase;
+import com.app.quandoo.Database.DAO.CustomerDao;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.RetrofitClient;
 
@@ -24,19 +26,26 @@ public class CustomerRepository
     public LiveData<List<Customer>> getCustomersList()
     {
         final MutableLiveData<List<Customer>> data = new MutableLiveData<>();
-
+        CustomerDao customerDao = AppDatabase.getInstance().customerDao();
         quandooAppService.getCustomersList().enqueue(new Callback<List<Customer>>()
         {
+
             @Override
             public void onResponse(Call<List<Customer>> call, Response<List<Customer>> response)
             {
-                data.setValue(response.body());
+                // Replace old cutomers data with new one.
+                List<Customer> body = response.body();
+                customerDao.deleteAll();
+                customerDao.insertOrReplaceUsers(body);
+                data.setValue(body);
             }
 
             @Override
             public void onFailure(Call<List<Customer>> call, Throwable t)
             {
-                data.setValue(null);
+                // Incase of exception load local customers.
+                List<Customer> customers = customerDao.loadAllCustomers();
+                data.setValue(customers);
             }
         });
 

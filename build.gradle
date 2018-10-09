@@ -19,6 +19,7 @@ buildscript {
         runnerVersion = '1.0.2'
         gson = '2.8.5'
         retrofit = '2.4.0'
+        archRoomVersion = "1.0.0"
         dataBindingCompilerVersion = gradleVersion // Always need to be the same.
     }
 

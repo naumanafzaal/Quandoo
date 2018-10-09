@@ -32,9 +32,9 @@ public class TableInfoRepository
             {
                 List<Boolean> resp = response.body();
                 List<TableInfo> infos = new ArrayList<>();
-                for (Boolean bool : resp)
+                for (int i = 0; i < resp.size(); i++)
                 {
-                    infos.add(new TableInfo(bool));
+                    infos.add(new TableInfo(i + 1, resp.get(i)));
                 }
                 data.setValue(infos);
             }

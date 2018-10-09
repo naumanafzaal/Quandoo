@@ -7,9 +7,11 @@ import android.app.Application;
  */
 public class QuandooApp extends Application
 {
+    public static QuandooApp context;
     @Override
     public void onCreate()
     {
         super.onCreate();
+        context = this;
     }
 }

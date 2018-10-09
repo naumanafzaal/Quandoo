@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.app.quandoo.R;
 import com.app.quandoo.Service.Model.Customer;
@@ -42,10 +43,13 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
             @Override
             public void onChanged(@Nullable List<Customer> customers)
             {
-                if(customers != null)
+                binding.setIsLoading(false);
+                if (customers != null && !customers.isEmpty())
                 {
-                    binding.setIsLoading(false);
                     customerListAdapter.setCustomerList(customers);
+                } else
+                {
+                    Toast.makeText(CustomerListActivity.this, R.string.unableToLoadData, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -61,6 +65,6 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
     @Override
     public void onClick(Customer customer)
     {
+        TableInfoActivity.show(this, customer);
     }
-
 }

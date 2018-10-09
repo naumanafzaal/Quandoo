@@ -2,4 +2,8 @@
     <string name="app_name">Quandoo</string>
     <string name="userName">Name: %s %s</string>
     <string name="userId">Id: %d</string>
+
+    <string name="unableToLoadData">Unable to load data. Please check your network connection.</string>
+
+    <string name="tableAlreadyBooked">This table is already booked. Please wait.</string>
 </resources>
