@@ -20,7 +20,7 @@ public class TableInfo
     public long lastBookedTime;
 
     // Customer information is being returned from server. Once we have it we know for which customer this table is booked.
-    public int customerId;
+    public int customerId = -1;
 
     final static  long FifteenMinsInMilli = TimeUnit.MINUTES.toMillis(15);
 
@@ -46,7 +46,7 @@ public class TableInfo
     {
         isBooked = false;
         lastBookedTime = 0;
-        customerId = 0;
+        customerId = -1;
     }
 
     public boolean canBookTable()

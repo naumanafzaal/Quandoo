@@ -18,25 +18,23 @@ package com.app.quandoo.Database.DAO;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
 
 import java.util.List;
-
-import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 
 @Dao
 public interface TableInfoDao
 {
     @Query("select * from tableinfo")
-    List<Customer> loadAllTableInfos();
+    List<TableInfo> loadAllTableInfos();
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrReplaceTables(List<TableInfo> tableInfos);
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrReplaceTable(TableInfo tableInfo);
 
     @Query("DELETE FROM tableinfo")
