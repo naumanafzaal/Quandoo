@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.app.quandoo.Database.AppDatabase;
 import com.app.quandoo.Database.DAO.TableInfoDao;
+import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
 import com.app.quandoo.Service.RetrofitClient;
 
@@ -41,18 +42,39 @@ public class TableInfoRepository
                     infos.add(new TableInfo(i + 1, resp.get(i)));
                 }
                 tableInfoDao.insertOrReplaceTables(infos);
-                data.setValue(infos);
+                data.setValue(getTablesInformation());
             }
 
             @Override
             public void onFailure(Call<List<Boolean>> call, Throwable t)
             {
                 // Incase of network failure load local data.
-                List<TableInfo> tableInfos = tableInfoDao.loadAllTableInfos();
-                data.setValue(tableInfos);
+                data.setValue(getTablesInformation());
             }
         });
 
         return data;
+    }
+
+    public void bookTable(TableInfo tableInfo, Customer customer)
+    {
+        tableInfo.bookTable(customer);
+        AppDatabase.getInstance().tableInfoDao().insertOrReplaceTable(tableInfo);
+    }
+
+    // This will locally mark tables free if any.
+    public List<TableInfo> getTablesInformation()
+    {
+        TableInfoDao tableInfoDao = AppDatabase.getInstance().tableInfoDao();
+        List<TableInfo> tableInfoList = tableInfoDao.loadAllTableInfos();
+        for (TableInfo tableInfo : tableInfoList)
+        {
+            if (tableInfo.canBookTable())
+            {
+                tableInfo.clearTable();
+            }
+        }
+        AppDatabase.getInstance().tableInfoDao().insertOrReplaceTables(tableInfoList);
+        return tableInfoList;
     }
 }

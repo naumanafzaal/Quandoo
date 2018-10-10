@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.os.Handler;
 
-import com.app.quandoo.Database.AppDatabase;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
 import com.app.quandoo.Service.Repository.TableInfoRepository;
@@ -19,8 +18,11 @@ public class TableInfoViewModel extends ViewModel
 {
     private MutableLiveData<List<TableInfo>> tableInfoObservable;
 
+    TableInfoRepository repository;
+
     public TableInfoViewModel()
     {
+        repository = new TableInfoRepository();
         fetchData();
         refreshData();
     }
@@ -36,8 +38,7 @@ public class TableInfoViewModel extends ViewModel
         boolean canBookTable = tableInfo.canBookTable();
         if (canBookTable)
         {
-            tableInfo.bookTable(customer);
-            AppDatabase.getInstance().tableInfoDao().insertOrReplaceTable(tableInfo);
+            repository.bookTable(tableInfo, customer);
             // Update UI
             tableInfoObservable.postValue(tableInfoObservable.getValue());
         }
@@ -51,25 +52,9 @@ public class TableInfoViewModel extends ViewModel
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                List<TableInfo> tableInfos = tableInfoObservable.getValue();
-                if(tableInfos != null)
-                {
-                    boolean isDataChanged = true;
-                    for (TableInfo tableInfo : tableInfos)
-                    {
-                        if (tableInfo.canBookTable())
-                        {
-                            tableInfo.clearTable();
-                            isDataChanged = true;
-                        }
-                    }
-                    // Only post data if it has changed.
-                    if (isDataChanged)
-                    {
-                        tableInfoObservable.postValue(tableInfos);
-                    }
-                }
 
+                List<TableInfo> tableInfos = repository.getTablesInformation();
+                tableInfoObservable.postValue(tableInfos);
                 refreshData();
             }
         }, TimeUnit.MINUTES.toMillis(1));
@@ -77,8 +62,6 @@ public class TableInfoViewModel extends ViewModel
 
     private void fetchData()
     {
-        TableInfoRepository repository = new TableInfoRepository();
         tableInfoObservable = repository.getTableDetails();
     }
-
 }
