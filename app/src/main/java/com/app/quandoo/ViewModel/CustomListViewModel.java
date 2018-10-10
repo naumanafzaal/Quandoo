@@ -3,6 +3,7 @@ package com.app.quandoo.ViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.app.quandoo.Service.Generic.DataWrapper;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Repository.CustomerRepository;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class CustomListViewModel extends ViewModel
 {
-    private MutableLiveData<List<Customer>> customerListObservable;
+    private MutableLiveData<DataWrapper<List<Customer>>> customerListObservable;
     CustomerRepository repository;
 
     public CustomListViewModel()
@@ -26,7 +27,7 @@ public class CustomListViewModel extends ViewModel
     /**
      * Expose the LiveData Customer query so the UI can observe it.
      */
-    public MutableLiveData<List<Customer>> getCustomerListObservable()
+    public MutableLiveData<DataWrapper<List<Customer>>> getCustomerListObservable()
     {
         customerListObservable = repository.getCustomersList();
         return customerListObservable;
@@ -42,6 +43,12 @@ public class CustomListViewModel extends ViewModel
         {
             customerList = repository.getCustomersMatchingName(searchText.toString());
         }
-        customerListObservable.postValue(customerList);
+        DataWrapper data = new DataWrapper();
+        data.setData(customerList);
+        if(customerList.isEmpty())
+        {
+            data.setApiException(new Exception("No customer found."));
+        }
+        customerListObservable.postValue(data);
     }
 }

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.app.quandoo.Database.AppDatabase;
 import com.app.quandoo.Database.DAO.CustomerDao;
+import com.app.quandoo.Service.Generic.DataWrapper;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.RetrofitClient;
 
@@ -27,20 +28,22 @@ public class CustomerRepository
         customerDao = AppDatabase.getInstance().customerDao();
     }
 
-    public MutableLiveData<List<Customer>> getCustomersList()
+    public MutableLiveData<DataWrapper<List<Customer>>> getCustomersList()
     {
-        final MutableLiveData<List<Customer>> data = new MutableLiveData<>();
+        final MutableLiveData<DataWrapper<List<Customer>>> data = new MutableLiveData<>();
+        final DataWrapper<List<Customer>> dataWrapper = new DataWrapper<>();
         quandooAppService.getCustomersList().enqueue(new Callback<List<Customer>>()
         {
 
             @Override
             public void onResponse(Call<List<Customer>> call, Response<List<Customer>> response)
             {
-                // Replace old cutomers data with new one.
+                // Replace old customers data with new one.
                 List<Customer> body = response.body();
                 customerDao.deleteAll();
                 customerDao.insertOrReplaceUsers(body);
-                data.setValue(body);
+                dataWrapper.setData(body);
+                data.setValue(dataWrapper);
             }
 
             @Override
@@ -48,7 +51,12 @@ public class CustomerRepository
             {
                 // Incase of exception load local customers.
                 List<Customer> customers = customerDao.loadAllCustomers();
-                data.setValue(customers);
+                dataWrapper.setData(customers);
+                if(t != null)
+                {
+                    dataWrapper.setApiException(new Exception("Unable to load data. Please try again later."));
+                }
+                data.setValue(dataWrapper);
             }
         });
 

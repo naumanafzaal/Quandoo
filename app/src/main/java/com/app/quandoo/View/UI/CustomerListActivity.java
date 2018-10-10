@@ -10,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.widget.Toast;
 
 import com.app.quandoo.R;
+import com.app.quandoo.Service.Generic.DataWrapper;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.View.Adapter.CustomerListAdapter;
 import com.app.quandoo.View.Callback.CustomerClickCallback;
@@ -40,22 +41,24 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
 
     private void observiewCustomerList()
     {
-        model.getCustomerListObservable().observe(this, new Observer<List<Customer>>()
+        model.getCustomerListObservable().observe(this, new Observer<DataWrapper<List<Customer>>>()
         {
             @Override
-            public void onChanged(@Nullable List<Customer> customers)
+            public void onChanged(@Nullable DataWrapper<List<Customer>> dataWrapper)
             {
                 binding.setIsLoading(false);
+                List<Customer> customers = dataWrapper.getData();
                 if (customers != null && !customers.isEmpty())
                 {
                     customerListAdapter.setCustomerList(customers);
                 } else
                 {
-                    Toast.makeText(CustomerListActivity.this, R.string.unableToLoadData, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomerListActivity.this, dataWrapper.getApiException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
 
     private void setUpRecyclerView()
     {
