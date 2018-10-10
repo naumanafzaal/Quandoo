@@ -26,7 +26,7 @@ import com.app.quandoo.QuandooApp;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
 
-@Database(entities = {Customer.class, TableInfo.class}, version = 1)
+@Database(entities = {Customer.class, TableInfo.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase
 {
     private static AppDatabase instance;

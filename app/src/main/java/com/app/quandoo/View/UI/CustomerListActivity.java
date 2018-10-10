@@ -32,6 +32,7 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
 
         binding = DataBindingUtil.setContentView(this, R.layout.customer_list);
         model = ViewModelProviders.of(this).get(CustomListViewModel.class);
+        binding.setViewModel(model);
 
         setUpRecyclerView();
         observiewCustomerList();

@@ -16,9 +16,11 @@
 
 package com.app.quandoo.Database.DAO;
 
+import android.arch.persistence.db.SupportSQLiteQuery;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RawQuery;
 
 import com.app.quandoo.Service.Model.Customer;
 
@@ -31,6 +33,9 @@ public interface CustomerDao
 {
     @Query("select * from customer")
     List<Customer> loadAllCustomers();
+
+    @RawQuery
+    List<Customer> searchUserWithName(SupportSQLiteQuery query);
 
     @Insert(onConflict = IGNORE)
     void insertOrReplaceUsers(List<Customer> customers);

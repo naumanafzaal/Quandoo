@@ -8,4 +8,6 @@
     <string name="unableToLoadData">Unable to load data. Please check your network connection.</string>
 
     <string name="tableAlreadyBooked">This table is already booked. Please wait.</string>
+    <string name="search_user">Search User</string>
+    <string name="loading_customers">Loading customers...</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.app.quandoo.ViewModel;
 
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.app.quandoo.Service.Model.Customer;
@@ -13,17 +13,35 @@ import java.util.List;
  */
 public class CustomListViewModel extends ViewModel
 {
-    private final LiveData<List<Customer>> customerListObservable;
+    private MutableLiveData<List<Customer>> customerListObservable;
+    CustomerRepository repository;
 
-    public CustomListViewModel() {
-        CustomerRepository repository = new CustomerRepository();
-        customerListObservable = repository.getCustomersList();
+    public CustomListViewModel()
+    {
+
+        repository = new CustomerRepository();
+        customerListObservable = new MutableLiveData<>();
     }
 
     /**
      * Expose the LiveData Customer query so the UI can observe it.
      */
-    public LiveData<List<Customer>> getCustomerListObservable() {
+    public MutableLiveData<List<Customer>> getCustomerListObservable()
+    {
+        customerListObservable = repository.getCustomersList();
         return customerListObservable;
+    }
+
+    public void onSearchTextChanged(CharSequence searchText)
+    {
+        List<Customer> customerList;
+        if (searchText.toString().isEmpty())
+        {
+            customerList = repository.getAllCustomers();
+        } else
+        {
+            customerList = repository.getCustomersMatchingName(searchText.toString());
+        }
+        customerListObservable.postValue(customerList);
     }
 }
