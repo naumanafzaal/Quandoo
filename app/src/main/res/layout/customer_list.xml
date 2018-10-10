@@ -3,6 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <variable name="handlers" type="com.app.quandoo.View.Callback.OnSearchInSoftKeyboardListener"/>
         <variable name="isLoading" type="boolean"/>
         <variable name="viewModel" type="com.app.quandoo.ViewModel.CustomListViewModel"/>
     </data>
@@ -38,7 +39,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:onTextChanged="@{(text, start, before, count) -> viewModel.onSearchTextChanged(text)}" />
+                app:onSearchInSoftKeyboard="@{handlers::onSearchPressed}"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/customerRecycler"

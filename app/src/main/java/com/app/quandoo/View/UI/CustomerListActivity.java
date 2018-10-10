@@ -17,6 +17,7 @@ import com.app.quandoo.View.Callback.CustomerClickCallback;
 import com.app.quandoo.ViewModel.CustomListViewModel;
 import com.app.quandoo.databinding.CustomerListBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +35,7 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
         binding = DataBindingUtil.setContentView(this, R.layout.customer_list);
         model = ViewModelProviders.of(this).get(CustomListViewModel.class);
         binding.setViewModel(model);
+        binding.setHandlers(model);
 
         setUpRecyclerView();
         observiewCustomerList();
@@ -53,6 +55,7 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
                     customerListAdapter.setCustomerList(customers);
                 } else
                 {
+                    customerListAdapter.setCustomerList(new ArrayList<>());
                     Toast.makeText(CustomerListActivity.this, dataWrapper.getApiException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
