@@ -62,7 +62,7 @@ public class CustomerRepository
         List<String> queries = new ArrayList<>();
         for (int i = 0; i < splitString.length; i++)
         {
-            queries.add(String.format("firstName LIKE '%%%1$s%%' or lastName LIKE '%%%2$s%%'", splitString[i], splitString[i]));
+            queries.add(String.format("(firstName LIKE '%%%1$s%%' or lastName LIKE '%%%2$s%%')", splitString[i], splitString[i]));
         }
         query = query + TextUtils.join(" AND ", queries);
         SimpleSQLiteQuery sqLiteQuery = new SimpleSQLiteQuery(query);
