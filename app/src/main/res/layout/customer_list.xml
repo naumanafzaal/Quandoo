@@ -39,7 +39,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                app:onSearchInSoftKeyboard="@{handlers::onSearchPressed}"/>
+                app:onSearchInSoftKeyboard="@{handlers::onSearchPressed}"
+                android:onTextChanged="@{(text, start, before, count) -> viewModel.onSearchPressed(text.toString())}"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/customerRecycler"

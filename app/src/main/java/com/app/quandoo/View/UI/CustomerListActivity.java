@@ -50,13 +50,14 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
             {
                 binding.setIsLoading(false);
                 List<Customer> customers = dataWrapper.getData();
+                Exception exception = dataWrapper.getApiException();
                 if (customers != null && !customers.isEmpty())
                 {
                     customerListAdapter.setCustomerList(customers);
-                } else
+                } else if(exception != null)
                 {
                     customerListAdapter.setCustomerList(new ArrayList<>());
-                    Toast.makeText(CustomerListActivity.this, dataWrapper.getApiException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CustomerListActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

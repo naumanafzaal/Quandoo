@@ -46,10 +46,6 @@ public class CustomListViewModel extends ViewModel implements OnSearchInSoftKeyb
         }
         DataWrapper data = new DataWrapper();
         data.setData(customerList);
-        if(customerList.isEmpty())
-        {
-            data.setApiException(new Exception("No customer found."));
-        }
         customerListObservable.postValue(data);
     }
 }

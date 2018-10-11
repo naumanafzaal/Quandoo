@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.app.quandoo.QuandooApp;
 import com.app.quandoo.R;
+import com.app.quandoo.Utils.Utils;
 import com.app.quandoo.View.Callback.OnSearchInSoftKeyboardListener;
 
 public class CustomBindingAdapter
@@ -31,20 +32,11 @@ public class CustomBindingAdapter
             textView.setText("Empty");
             textView.setTextColor(ContextCompat.getColor(QuandooApp.context, R.color.gray));
         }
-
-        textView.setOnEditorActionListener(new TextView.OnEditorActionListener()
-        {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
-            {
-                return false;
-            }
-        });
     }
 
-    @BindingAdapter("onSearchInSoftKeyboard") // I like it to match the listener method name
-    public static void setOnOkInSoftKeyboardListener(TextView view,
-                                                     final OnSearchInSoftKeyboardListener listener)
+    @BindingAdapter("onSearchInSoftKeyboard")
+    public static void setOnSearchInSoftKeyboardListener(TextView view,
+                                                         final OnSearchInSoftKeyboardListener listener)
     {
         if (listener == null)
         {
@@ -59,6 +51,7 @@ public class CustomBindingAdapter
                     if (actionId == EditorInfo.IME_ACTION_SEARCH)
                     {
                         listener.onSearchPressed(view.getText().toString());
+                        Utils.hideKeyboard(view);
                     }
                     return false;
                 }
