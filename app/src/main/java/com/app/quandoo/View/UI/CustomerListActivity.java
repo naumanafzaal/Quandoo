@@ -54,10 +54,13 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerC
                 if (customers != null && !customers.isEmpty())
                 {
                     customerListAdapter.setCustomerList(customers);
-                } else if(exception != null)
+                } else if (exception != null)
                 {
                     customerListAdapter.setCustomerList(new ArrayList<>());
                     Toast.makeText(CustomerListActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                } else
+                {
+                    customerListAdapter.setCustomerList(new ArrayList<>());
                 }
             }
         });
