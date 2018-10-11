@@ -26,7 +26,7 @@ import com.app.quandoo.Service.Model.Customer;
 
 import java.util.List;
 
-import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
+import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface CustomerDao
@@ -37,7 +37,7 @@ public interface CustomerDao
     @RawQuery
     List<Customer> searchUserWithName(SupportSQLiteQuery query);
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     void insertOrReplaceUsers(List<Customer> customers);
 
     @Query("select * from customer where id is :id")

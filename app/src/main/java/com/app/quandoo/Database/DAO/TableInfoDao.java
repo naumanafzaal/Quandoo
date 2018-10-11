@@ -37,6 +37,9 @@ public interface TableInfoDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrReplaceTable(TableInfo tableInfo);
 
+    @Query("select * from tableinfo where id is :id")
+    TableInfo tableWithId(int id);
+
     @Query("DELETE FROM tableinfo")
     void deleteAll();
 }

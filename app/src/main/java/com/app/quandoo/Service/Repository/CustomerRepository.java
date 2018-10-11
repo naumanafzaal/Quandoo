@@ -19,16 +19,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.app.quandoo.QuandooApp.context;
+
 public class CustomerRepository
 {
     private QuandooAppService quandooAppService;
-    CustomerDao customerDao;
-    ExecutorService executorService;
+    private CustomerDao customerDao;
+    private ExecutorService executorService;
 
     public CustomerRepository()
     {
         this.quandooAppService = RetrofitClient.getInstance().create(QuandooAppService.class);
-        customerDao = AppDatabase.getInstance().customerDao();
+        customerDao = AppDatabase.getInstance(context).customerDao();
         executorService = Executors.newSingleThreadExecutor();
     }
 

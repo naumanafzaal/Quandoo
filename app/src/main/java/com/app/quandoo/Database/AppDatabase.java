@@ -19,10 +19,10 @@ package com.app.quandoo.Database;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.content.Context;
 
 import com.app.quandoo.Database.DAO.CustomerDao;
 import com.app.quandoo.Database.DAO.TableInfoDao;
-import com.app.quandoo.QuandooApp;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
 
@@ -35,11 +35,11 @@ public abstract class AppDatabase extends RoomDatabase
 
     public abstract TableInfoDao tableInfoDao();
 
-    public static AppDatabase getInstance()
+    public static AppDatabase getInstance(Context context)
     {
         if (instance == null)
         {
-            instance = Room.databaseBuilder(QuandooApp.context, AppDatabase.class, "quandoo")
+            instance = Room.databaseBuilder(context, AppDatabase.class, "quandoo")
                     .fallbackToDestructiveMigration()
                     .build();
         }

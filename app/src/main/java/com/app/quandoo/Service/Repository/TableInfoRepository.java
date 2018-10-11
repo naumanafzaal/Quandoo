@@ -18,6 +18,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.app.quandoo.QuandooApp.context;
+
 public class TableInfoRepository
 {
     private final ExecutorService executorService;
@@ -28,8 +30,8 @@ public class TableInfoRepository
     public TableInfoRepository()
     {
         this.quandooAppService = RetrofitClient.getInstance().create(QuandooAppService.class);
-        tableInfoDao = AppDatabase.getInstance().tableInfoDao();
-        customerDao = AppDatabase.getInstance().customerDao();
+        tableInfoDao = AppDatabase.getInstance(context).tableInfoDao();
+        customerDao = AppDatabase.getInstance(context).customerDao();
         executorService = Executors.newSingleThreadExecutor();
     }
 
