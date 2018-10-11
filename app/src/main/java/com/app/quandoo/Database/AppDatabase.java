@@ -40,7 +40,6 @@ public abstract class AppDatabase extends RoomDatabase
         if (instance == null)
         {
             instance = Room.databaseBuilder(QuandooApp.context, AppDatabase.class, "quandoo")
-                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build();
         }

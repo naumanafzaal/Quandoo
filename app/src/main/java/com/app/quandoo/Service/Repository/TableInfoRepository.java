@@ -10,6 +10,8 @@ import com.app.quandoo.Service.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,18 +19,20 @@ import retrofit2.Response;
 
 public class TableInfoRepository
 {
+    private final ExecutorService executorService;
     private QuandooAppService quandooAppService;
+    private TableInfoDao tableInfoDao;
 
     public TableInfoRepository()
     {
         this.quandooAppService = RetrofitClient.getInstance().create(QuandooAppService.class);
+        tableInfoDao = AppDatabase.getInstance().tableInfoDao();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     public MutableLiveData<List<TableInfo>> getTableDetails()
     {
         final MutableLiveData<List<TableInfo>> data = new MutableLiveData<>();
-
-        TableInfoDao tableInfoDao = AppDatabase.getInstance().tableInfoDao();
         quandooAppService.getTablesInfo().enqueue(new Callback<List<Boolean>>()
         {
             @Override
@@ -42,39 +46,53 @@ public class TableInfoRepository
                     infos.add(new TableInfo(i + 1, resp.get(i)));
                 }
                 tableInfoDao.insertOrReplaceTables(infos);
-                data.setValue(getTablesInformation());
+                refreshTablesInformation(data);
             }
 
             @Override
             public void onFailure(Call<List<Boolean>> call, Throwable t)
             {
                 // Incase of network failure load local data.
-                data.setValue(getTablesInformation());
+                refreshTablesInformation(data);
             }
         });
 
         return data;
     }
 
-    public void bookTable(TableInfo tableInfo, Customer customer)
+    public void bookTable(MutableLiveData<List<TableInfo>> data, TableInfo tableInfo, Customer customer)
     {
-        tableInfo.bookTable(customer);
-        AppDatabase.getInstance().tableInfoDao().insertOrReplaceTable(tableInfo);
+        executorService.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                tableInfo.bookTable(customer);
+                tableInfoDao.insertOrReplaceTable(tableInfo);
+                refreshTablesInformation(data);
+            }
+        });
     }
 
     // This will locally mark tables free if any.
-    public List<TableInfo> getTablesInformation()
+    public void refreshTablesInformation(MutableLiveData<List<TableInfo>> data)
     {
-        TableInfoDao tableInfoDao = AppDatabase.getInstance().tableInfoDao();
-        List<TableInfo> tableInfoList = tableInfoDao.loadAllTableInfos();
-        for (TableInfo tableInfo : tableInfoList)
+        executorService.execute(new Runnable()
         {
-            if (tableInfo.canBookTable())
+            @Override
+            public void run()
             {
-                tableInfo.clearTable();
+                List<TableInfo> tableInfoList = tableInfoDao.loadAllTableInfos();
+                for (TableInfo tableInfo : tableInfoList)
+                {
+                    if (tableInfo.canBookTable())
+                    {
+                        tableInfo.clearTable();
+                    }
+                }
+                tableInfoDao.insertOrReplaceTables(tableInfoList);
+                data.postValue(tableInfoList);
             }
-        }
-        AppDatabase.getInstance().tableInfoDao().insertOrReplaceTables(tableInfoList);
-        return tableInfoList;
+        });
     }
 }

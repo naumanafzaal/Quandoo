@@ -36,16 +36,6 @@ public class CustomListViewModel extends ViewModel implements OnSearchInSoftKeyb
 
     public void onSearchPressed(String searchText)
     {
-        List<Customer> customerList;
-        if (searchText.toString().isEmpty())
-        {
-            customerList = repository.getAllCustomers();
-        } else
-        {
-            customerList = repository.getCustomersMatchingName(searchText);
-        }
-        DataWrapper data = new DataWrapper();
-        data.setData(customerList);
-        customerListObservable.postValue(data);
+        repository.searchCustomersMatchingName(customerListObservable, searchText);
     }
 }

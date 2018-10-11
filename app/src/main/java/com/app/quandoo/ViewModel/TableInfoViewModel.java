@@ -38,9 +38,7 @@ public class TableInfoViewModel extends ViewModel
         boolean canBookTable = tableInfo.canBookTable();
         if (canBookTable)
         {
-            repository.bookTable(tableInfo, customer);
-            // Update UI
-            tableInfoObservable.postValue(tableInfoObservable.getValue());
+            repository.bookTable(tableInfoObservable, tableInfo, customer);
         }
         return canBookTable;
     }
@@ -53,8 +51,7 @@ public class TableInfoViewModel extends ViewModel
             @Override
             public void run() {
 
-                List<TableInfo> tableInfos = repository.getTablesInformation();
-                tableInfoObservable.postValue(tableInfos);
+                repository.refreshTablesInformation(tableInfoObservable);
                 refreshData();
             }
         }, TimeUnit.MINUTES.toMillis(1));
