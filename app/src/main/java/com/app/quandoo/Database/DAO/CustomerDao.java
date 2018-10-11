@@ -40,6 +40,9 @@ public interface CustomerDao
     @Insert(onConflict = IGNORE)
     void insertOrReplaceUsers(List<Customer> customers);
 
+    @Query("select * from customer where id is :id")
+    Customer customerWithId(int id);
+
     @Query("DELETE FROM customer")
     void deleteAll();
 }

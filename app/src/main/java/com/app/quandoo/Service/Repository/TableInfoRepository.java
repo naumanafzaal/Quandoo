@@ -3,6 +3,7 @@ package com.app.quandoo.Service.Repository;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.app.quandoo.Database.AppDatabase;
+import com.app.quandoo.Database.DAO.CustomerDao;
 import com.app.quandoo.Database.DAO.TableInfoDao;
 import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Service.Model.TableInfo;
@@ -20,6 +21,7 @@ import retrofit2.Response;
 public class TableInfoRepository
 {
     private final ExecutorService executorService;
+    private final CustomerDao customerDao;
     private QuandooAppService quandooAppService;
     private TableInfoDao tableInfoDao;
 
@@ -27,6 +29,7 @@ public class TableInfoRepository
     {
         this.quandooAppService = RetrofitClient.getInstance().create(QuandooAppService.class);
         tableInfoDao = AppDatabase.getInstance().tableInfoDao();
+        customerDao = AppDatabase.getInstance().customerDao();
         executorService = Executors.newSingleThreadExecutor();
     }
 
@@ -88,6 +91,10 @@ public class TableInfoRepository
                     if (tableInfo.canBookTable())
                     {
                         tableInfo.clearTable();
+                    }
+                    else
+                    {
+                        tableInfo.customer = customerDao.customerWithId(tableInfo.customerId);
                     }
                 }
                 tableInfoDao.insertOrReplaceTables(tableInfoList);

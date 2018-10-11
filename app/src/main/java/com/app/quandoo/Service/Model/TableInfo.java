@@ -1,6 +1,7 @@
 package com.app.quandoo.Service.Model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -21,6 +22,10 @@ public class TableInfo
 
     // Customer information is being returned from server. Once we have it we know for which customer this table is booked.
     public int customerId = -1;
+
+    // Populate it when fetching tables information.
+    @Ignore
+    public Customer customer;
 
     final static  long FifteenMinsInMilli = TimeUnit.MINUTES.toMillis(15);
 

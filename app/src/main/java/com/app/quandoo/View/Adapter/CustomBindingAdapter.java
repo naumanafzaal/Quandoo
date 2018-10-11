@@ -1,6 +1,7 @@
 package com.app.quandoo.View.Adapter;
 
 import android.databinding.BindingAdapter;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.app.quandoo.QuandooApp;
 import com.app.quandoo.R;
+import com.app.quandoo.Service.Model.Customer;
 import com.app.quandoo.Utils.Utils;
 import com.app.quandoo.View.Callback.OnSearchInSoftKeyboardListener;
 
@@ -20,12 +22,19 @@ public class CustomBindingAdapter
         view.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    @BindingAdapter("bookedText")
-    public static void setBookedText(TextView textView, boolean isBooked)
+    @BindingAdapter({"isBooked", "customer"})
+    public static void setBookedText(TextView textView, boolean isBooked, @Nullable Customer customer)
     {
         if (isBooked)
         {
-            textView.setText("Booked");
+            if(customer == null)
+            {
+                textView.setText("Booked");
+            }
+            else
+            {
+                textView.setText("Booked by " + customer.firstName + " " + customer.lastName);
+            }
             textView.setTextColor(ContextCompat.getColor(QuandooApp.context, R.color.colorAccent));
         } else
         {
