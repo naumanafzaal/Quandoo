@@ -12,8 +12,6 @@ import com.app.quandoo.Service.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,13 +23,11 @@ public class CustomerRepository
 {
     private QuandooAppService quandooAppService;
     private CustomerDao customerDao;
-    private ExecutorService executorService;
 
     public CustomerRepository()
     {
         this.quandooAppService = RetrofitClient.getInstance().create(QuandooAppService.class);
         customerDao = AppDatabase.getInstance(context).customerDao();
-        executorService = Executors.newSingleThreadExecutor();
     }
 
     public MutableLiveData<DataWrapper<List<Customer>>> getCustomersList()
@@ -69,35 +65,27 @@ public class CustomerRepository
     }
 
     // Execute search from database in background thread.
-    public void searchCustomersMatchingName(MutableLiveData<DataWrapper<List<Customer>>> liveData, String searchText)
+    public DataWrapper searchCustomersMatchingName(String searchText)
     {
-        executorService.execute(new Runnable()
+        DataWrapper wrapper = new DataWrapper();
+        if(searchText.isEmpty())
         {
-            @Override
-            public void run()
+            wrapper.setData(customerDao.loadAllCustomers());
+        }
+        else
+        {
+            String[] splitString = searchText.toString().split(" ");
+            String query = "select * from customer where ";
+            List<String> queries = new ArrayList<>();
+            for (int i = 0; i < splitString.length; i++)
             {
-                DataWrapper wrapper = new DataWrapper();
-                if(searchText.isEmpty())
-                {
-                    wrapper.setData(customerDao.loadAllCustomers());
-                }
-                else
-                {
-                    String[] splitString = searchText.toString().split(" ");
-                    String query = "select * from customer where ";
-                    List<String> queries = new ArrayList<>();
-                    for (int i = 0; i < splitString.length; i++)
-                    {
-                        queries.add(String.format("(firstName LIKE '%%%1$s%%' or lastName LIKE '%%%2$s%%')", splitString[i], splitString[i]));
-                    }
-                    query = query + TextUtils.join(" AND ", queries);
-                    SimpleSQLiteQuery sqLiteQuery = new SimpleSQLiteQuery(query);
-
-                    wrapper.setData(customerDao.searchUserWithName(sqLiteQuery));
-                }
-                liveData.postValue(wrapper);
+                queries.add(String.format("(firstName LIKE '%%%1$s%%' or lastName LIKE '%%%2$s%%')", splitString[i], splitString[i]));
             }
-        });
+            query = query + TextUtils.join(" AND ", queries);
+            SimpleSQLiteQuery sqLiteQuery = new SimpleSQLiteQuery(query);
 
+            wrapper.setData(customerDao.searchUserWithName(sqLiteQuery));
+        }
+        return wrapper;
     }
 }

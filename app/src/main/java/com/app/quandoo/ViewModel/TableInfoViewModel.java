@@ -9,6 +9,8 @@ import com.app.quandoo.Service.Model.TableInfo;
 import com.app.quandoo.Service.Repository.TableInfoRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,13 +18,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class TableInfoViewModel extends ViewModel
 {
+    private final ExecutorService executorService;
     private MutableLiveData<List<TableInfo>> tableInfoObservable;
 
     TableInfoRepository repository;
 
+
     public TableInfoViewModel()
     {
         repository = new TableInfoRepository();
+        executorService = Executors.newSingleThreadExecutor();
         fetchData();
         refreshData();
     }
@@ -51,7 +56,14 @@ public class TableInfoViewModel extends ViewModel
             @Override
             public void run() {
 
-                repository.refreshTablesInformation(tableInfoObservable);
+                executorService.execute(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        tableInfoObservable.postValue(repository.refreshTablesInformation());
+                    }
+                });
                 refreshData();
             }
         }, TimeUnit.MINUTES.toMillis(1));

@@ -9,6 +9,8 @@ import com.app.quandoo.Service.Repository.CustomerRepository;
 import com.app.quandoo.View.Callback.OnSearchInSoftKeyboardListener;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Nauman Afzaal on 09/10/2018.
@@ -17,12 +19,14 @@ public class CustomListViewModel extends ViewModel implements OnSearchInSoftKeyb
 {
     private MutableLiveData<DataWrapper<List<Customer>>> customerListObservable;
     CustomerRepository repository;
+    private ExecutorService executorService;
 
     public CustomListViewModel()
     {
 
         repository = new CustomerRepository();
         customerListObservable = new MutableLiveData<>();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -36,6 +40,15 @@ public class CustomListViewModel extends ViewModel implements OnSearchInSoftKeyb
 
     public void onSearchPressed(String searchText)
     {
-        repository.searchCustomersMatchingName(customerListObservable, searchText);
+        executorService.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                DataWrapper dataWrapper = repository.searchCustomersMatchingName(searchText);
+                customerListObservable.postValue(dataWrapper);
+            }
+        });
+
     }
 }

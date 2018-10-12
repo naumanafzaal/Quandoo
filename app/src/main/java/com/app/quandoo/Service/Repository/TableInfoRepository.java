@@ -51,14 +51,14 @@ public class TableInfoRepository
                     infos.add(new TableInfo(i + 1, resp.get(i)));
                 }
                 tableInfoDao.insertOrReplaceTables(infos);
-                refreshTablesInformation(data);
+                data.postValue(refreshTablesInformation());
             }
 
             @Override
             public void onFailure(Call<List<Boolean>> call, Throwable t)
             {
                 // Incase of network failure load local data.
-                refreshTablesInformation(data);
+                data.postValue(refreshTablesInformation());
             }
         });
 
@@ -74,34 +74,28 @@ public class TableInfoRepository
             {
                 tableInfo.bookTable(customer);
                 tableInfoDao.insertOrReplaceTable(tableInfo);
-                refreshTablesInformation(data);
+                data.postValue(refreshTablesInformation());
             }
         });
     }
 
     // This will locally mark tables free if any.
-    public void refreshTablesInformation(MutableLiveData<List<TableInfo>> data)
+    // To be execute on background thread.
+    public List<TableInfo> refreshTablesInformation()
     {
-        executorService.execute(new Runnable()
+        List<TableInfo> tableInfoList = tableInfoDao.loadAllTableInfos();
+        for (TableInfo tableInfo : tableInfoList)
         {
-            @Override
-            public void run()
+            if (tableInfo.canBookTable())
             {
-                List<TableInfo> tableInfoList = tableInfoDao.loadAllTableInfos();
-                for (TableInfo tableInfo : tableInfoList)
-                {
-                    if (tableInfo.canBookTable())
-                    {
-                        tableInfo.clearTable();
-                    }
-                    else
-                    {
-                        tableInfo.customer = customerDao.customerWithId(tableInfo.customerId);
-                    }
-                }
-                tableInfoDao.insertOrReplaceTables(tableInfoList);
-                data.postValue(tableInfoList);
+                tableInfo.clearTable();
             }
-        });
+            else
+            {
+                tableInfo.customer = customerDao.customerWithId(tableInfo.customerId);
+            }
+        }
+        tableInfoDao.insertOrReplaceTables(tableInfoList);
+        return tableInfoList;
     }
 }
