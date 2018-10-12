@@ -43,7 +43,14 @@ public class TableInfoViewModel extends ViewModel
         boolean canBookTable = tableInfo.canBookTable();
         if (canBookTable)
         {
-            repository.bookTable(tableInfoObservable, tableInfo, customer);
+            executorService.execute(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    tableInfoObservable.postValue(repository.bookTable(tableInfo, customer));
+                }
+            });
         }
         return canBookTable;
     }

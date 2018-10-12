@@ -65,18 +65,11 @@ public class TableInfoRepository
         return data;
     }
 
-    public void bookTable(MutableLiveData<List<TableInfo>> data, TableInfo tableInfo, Customer customer)
+    public List<TableInfo> bookTable(TableInfo tableInfo, Customer customer)
     {
-        executorService.execute(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                tableInfo.bookTable(customer);
-                tableInfoDao.insertOrReplaceTable(tableInfo);
-                data.postValue(refreshTablesInformation());
-            }
-        });
+        tableInfo.bookTable(customer);
+        tableInfoDao.insertOrReplaceTable(tableInfo);
+        return refreshTablesInformation();
     }
 
     // This will locally mark tables free if any.
